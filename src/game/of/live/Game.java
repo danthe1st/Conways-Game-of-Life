@@ -27,53 +27,47 @@ public class Game extends Application{
 	private Simulation sim=null;
 	private Rectangle[][] rects=null;
 	private Stage stage=null;
-	
 	private Screen screen=Screen.getPrimary();
-
 	private Stage controller=null;
 
 	public static void main(String[] args) {
 		launch(args);
 	}
 	@Override
-		public void start(Stage primaryStage) throws Exception {
-			stage=primaryStage;
-			
-			for (Screen localscreen : Screen.getScreens()) {
-				Rectangle2D screenBounds=screen.getVisualBounds();
-				Rectangle2D localBounds=localscreen.getVisualBounds();
-				if (localBounds.getWidth()*localBounds.getHeight()>screenBounds.getWidth()+screenBounds.getHeight()) {
-					screen=localscreen;
-				}
+	public void start(Stage primaryStage) throws Exception {
+		stage=primaryStage;
+		
+		for (Screen localscreen : Screen.getScreens()) {
+			Rectangle2D screenBounds=screen.getVisualBounds();
+			Rectangle2D localBounds=localscreen.getVisualBounds();
+			if (localBounds.getWidth()*localBounds.getHeight()>screenBounds.getWidth()+screenBounds.getHeight()) {
+				screen=localscreen;
 			}
-			
-			Rectangle2D primaryScreenBounds = screen.getVisualBounds();
-			
-			numBoxesX=(int) (primaryScreenBounds.getHeight()/boxSize)-2;
-			numBoxesY=(int) (primaryScreenBounds.getWidth()/boxSize)-2;
-			
-			
-			sim=new Simulation(numBoxesX,numBoxesY);
-			rects=sim.getPixels();
-			moveToScreen(screen);
-			
-	//		primaryStage.setFullScreen(true);
-			
-			primaryStage.setResizable(false);
-			primaryStage.setScene(getSimulationScene());
-			primaryStage.initStyle(StageStyle.UTILITY);
-			primaryStage.setOnCloseRequest(e->Platform.exit());
-			primaryStage.setTitle("Conways Game of Live");
-			//primaryStage.setAlwaysOnTop(true);
-			primaryStage.show();
-			
-			loadControllerStage();
-			controller.show();
-			
-			
-			gameThread=new Thread(sim);
-			gameThread.start();
 		}
+		
+		Rectangle2D primaryScreenBounds = screen.getVisualBounds();
+		
+		numBoxesX=(int) (primaryScreenBounds.getHeight()/boxSize)-2;
+		numBoxesY=(int) (primaryScreenBounds.getWidth()/boxSize)-2;
+		
+		sim=new Simulation(numBoxesX,numBoxesY);
+		rects=sim.getPixels();
+		moveToScreen(screen);
+		
+		primaryStage.setResizable(false);
+		primaryStage.setScene(getSimulationScene());
+		primaryStage.initStyle(StageStyle.UTILITY);
+		primaryStage.setOnCloseRequest(e->Platform.exit());
+		primaryStage.setTitle("Conways Game of Live");
+		//primaryStage.setAlwaysOnTop(true);
+		primaryStage.show();
+		
+		loadControllerStage();
+		controller.show();
+		
+		gameThread=new Thread(sim);
+		gameThread.start();
+	}
 	private void rescale(Screen screen) {
 		boolean show=stage.isShowing();
 		if (show) {
@@ -122,15 +116,6 @@ public class Game extends Application{
 		Rectangle2D primaryScreenBounds = screen.getVisualBounds();
 		stage.setX(primaryScreenBounds.getMinX()-boxSize);
 		stage.setY(primaryScreenBounds.getMinY()-boxSize);
-//		if (primaryScreenBounds.getHeight()<primaryScreenBounds.getWidth()) {
-//			BOX_SIZE=(int) (primaryScreenBounds.getWidth()/100);
-//		}
-//		else {
-//			BOX_SIZE=(int) (primaryScreenBounds.getHeight()/100);
-//		}
-//		NUM_BOXES_X=(int) (primaryScreenBounds.getHeight()/BOX_SIZE);
-//		NUM_BOXES_Y=(int) (primaryScreenBounds.getWidth()/BOX_SIZE);
-		
 	}
 	private Scene getControllerScene() {
 		final int numScreens=Screen.getScreens().size();
@@ -170,9 +155,7 @@ public class Game extends Application{
 						)
 		};
 		VBox root=new VBox(lines);
-		
 		Scene scene=new Scene(root);
-		
 		return scene;
 	}
 	private Button getButton(String name,EventHandler<? super MouseEvent> onClick) {
@@ -180,29 +163,17 @@ public class Game extends Application{
 		button.setOnMouseClicked(onClick);
 		return button;
 	}
-	
 	private Scene getSimulationScene() {
-		
-		
 		HBox[] lines=new HBox[rects.length];
-		
 		for(int x=0;x<rects.length;x++) {
-			
-			
-//			for(int y=0;y<rects[0].length;y++) {
-//					
-//			}
 			try {
 				lines[x]=new HBox(rects[x]);
 			} catch (NullPointerException e) {
 				
 			}
-			
 		}
-		
 		VBox root=new VBox(lines);
 		Scene scene=new Scene(root);
-		
 		scene.setOnKeyPressed(k->{
 			if (k.getCode()==KeyCode.P||k.getCode()==KeyCode.SPACE) {
 				pause();
@@ -242,5 +213,4 @@ public class Game extends Application{
 	public void stop() throws Exception {
 		System.exit(0);
 	}
-	
 }
