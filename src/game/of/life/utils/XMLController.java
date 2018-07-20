@@ -1,4 +1,4 @@
-package game.of.live.utils;
+package game.of.life.utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,7 +8,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import game.of.live.Simulation;
+import game.of.life.Simulation;
 
 
 public class XMLController {

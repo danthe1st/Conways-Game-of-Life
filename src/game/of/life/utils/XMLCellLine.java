@@ -1,4 +1,4 @@
-package game.of.live.utils;
+package game.of.life.utils;
 
 import javax.xml.bind.annotation.XmlRootElement;
 

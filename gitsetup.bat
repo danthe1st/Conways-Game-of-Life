@@ -1,5 +1,5 @@
 @echo off
-set REP_PATH=https://github.com/danthe1st/Conways-Game-of-Live.git
+set REP_PATH=https://github.com/danthe1st/Conways-Game-of-Life.git
 git init
 ::git remote remove origin
 ::git remote add origin %REP_PATH%

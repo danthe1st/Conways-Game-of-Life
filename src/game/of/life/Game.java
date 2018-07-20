@@ -1,8 +1,8 @@
-package game.of.live;
+package game.of.life;
 
 import java.io.File;
 
-import game.of.live.utils.XMLController;
+import game.of.life.utils.XMLController;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;

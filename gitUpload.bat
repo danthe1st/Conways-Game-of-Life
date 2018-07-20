@@ -1,5 +1,5 @@
 @echo off
-set REP_PATH=https://github.com/danthe1st/Conways-Game-of-Live.git
+set REP_PATH=https://github.com/danthe1st/Conways-Game-of-Life.git
 
 git commit -m %TIME%"
 git remote add origin %REP_PATH%

@@ -1,9 +1,9 @@
-package game.of.live.utils;
+package game.of.life.utils;
 
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import game.of.live.Simulation;
+import game.of.life.Simulation;
 
 @XmlRootElement(name="simulation")
 public class XMLSimulation {//TODO

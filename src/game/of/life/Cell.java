@@ -1,4 +1,4 @@
-package game.of.live;
+package game.of.life;
 
 
 import javafx.scene.input.MouseButton;
