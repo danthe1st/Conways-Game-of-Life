@@ -3,7 +3,7 @@ an Instance of Conway's Game Of Life made with JavaFX
 
 Conway's Game Of Life is a 2D-grid by John Horton Conway.  
 Every Cell can have 2 states: alive or dead.  
-##Rules
+## Rules
 * Any live cell with fewer than two live neighbors dies in the next generation, as if by under population.
 * Any live cell with two or three live neighbors lives on to the next generation.
 * Any live cell with more than three live neighbors dies in the next generation, as if by overpopulation.
