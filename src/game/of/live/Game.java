@@ -19,19 +19,62 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 public class Game extends Application{
-	public static int BOX_SIZE=10;
-	public static int NUM_BOXES_X=50;//wie viele Zeilen?
-	public static int NUM_BOXES_Y=100;//wie viele Spalten?
+	public static int boxSize=10;
+	private static int numBoxesX=50;//how many lines?
+	private static int numBoxesY=100;//how many colums
 	
 	private Thread gameThread=null;
 	private Simulation sim=null;
 	private Rectangle[][] rects=null;
 	private Stage stage=null;
 	
+	private Screen screen=Screen.getPrimary();
+
+	private Stage controller=null;
+
 	public static void main(String[] args) {
 		launch(args);
 	}
-	private void rescale(Screen screen) {//TODO
+	@Override
+		public void start(Stage primaryStage) throws Exception {
+			stage=primaryStage;
+			
+			for (Screen localscreen : Screen.getScreens()) {
+				Rectangle2D screenBounds=screen.getVisualBounds();
+				Rectangle2D localBounds=localscreen.getVisualBounds();
+				if (localBounds.getWidth()*localBounds.getHeight()>screenBounds.getWidth()+screenBounds.getHeight()) {
+					screen=localscreen;
+				}
+			}
+			
+			Rectangle2D primaryScreenBounds = screen.getVisualBounds();
+			
+			numBoxesX=(int) (primaryScreenBounds.getHeight()/boxSize)-2;
+			numBoxesY=(int) (primaryScreenBounds.getWidth()/boxSize)-2;
+			
+			
+			sim=new Simulation(numBoxesX,numBoxesY);
+			rects=sim.getPixels();
+			moveToScreen(screen);
+			
+	//		primaryStage.setFullScreen(true);
+			
+			primaryStage.setResizable(false);
+			primaryStage.setScene(getSimulationScene());
+			primaryStage.initStyle(StageStyle.UTILITY);
+			primaryStage.setOnCloseRequest(e->Platform.exit());
+			primaryStage.setTitle("Conways Game of Live");
+			//primaryStage.setAlwaysOnTop(true);
+			primaryStage.show();
+			
+			loadControllerStage();
+			controller.show();
+			
+			
+			gameThread=new Thread(sim);
+			gameThread.start();
+		}
+	private void rescale(Screen screen) {
 		boolean show=stage.isShowing();
 		if (show) {
 			stage.hide();
@@ -39,15 +82,15 @@ public class Game extends Application{
 		
 		Rectangle2D screenBounds = screen.getVisualBounds();
 		if (screenBounds.getHeight()>screenBounds.getWidth()) {
-			BOX_SIZE=(int) ((screenBounds.getWidth()-1)/rects[0].length);
+			boxSize=(int) ((screenBounds.getWidth())/rects[0].length);
 		}
 		else {
-			BOX_SIZE=(int) ((screenBounds.getHeight()-1)/rects.length);
+			boxSize=(int) ((screenBounds.getHeight())/rects.length);
 		}
 		for (int x = 0; x < rects.length; x++) {
 			for (int y = 0; y < rects[x].length; y++) {
-				rects[x][y].setWidth(BOX_SIZE);
-				rects[x][y].setHeight(BOX_SIZE);
+				rects[x][y].setWidth(boxSize);
+				rects[x][y].setHeight(boxSize);
 			}
 		}
 		
@@ -58,45 +101,9 @@ public class Game extends Application{
 		}
 		
 	}
-	Stage controller=null;
-	@Override
-	public void start(Stage primaryStage) throws Exception {
-		stage=primaryStage;
-		Screen screen=Screen.getPrimary();
-		for (Screen localscreen : Screen.getScreens()) {
-			Rectangle2D screenBounds=screen.getVisualBounds();
-			Rectangle2D localBounds=localscreen.getVisualBounds();
-			if (localBounds.getWidth()*localBounds.getHeight()>screenBounds.getWidth()+screenBounds.getHeight()) {
-				screen=localscreen;
-			}
-		}
-		
-		Rectangle2D primaryScreenBounds = screen.getVisualBounds();
-		
-		NUM_BOXES_X=(int) (primaryScreenBounds.getHeight()/BOX_SIZE)-2;
-		NUM_BOXES_Y=(int) (primaryScreenBounds.getWidth()/BOX_SIZE)-2;
-		
-		
-		sim=new Simulation(NUM_BOXES_X,NUM_BOXES_Y);
+	public void reloadRects() {
 		rects=sim.getPixels();
 		moveToScreen(screen);
-		
-//		primaryStage.setFullScreen(true);
-		
-		primaryStage.setResizable(false);
-		primaryStage.setScene(getSimulationScene());
-		primaryStage.initStyle(StageStyle.UTILITY);
-		primaryStage.setOnCloseRequest(e->Platform.exit());
-		primaryStage.setTitle("Conways Game of Live");
-		//primaryStage.setAlwaysOnTop(true);
-		primaryStage.show();
-		
-		loadControllerStage();
-		controller.show();
-		
-		
-		gameThread=new Thread(sim);
-		gameThread.start();
 	}
 	private void loadControllerStage() {
 		if (controller==null) {
@@ -110,11 +117,11 @@ public class Game extends Application{
 		controller.setTitle("Controller - Conways Game of Live");
 		controller.setAlwaysOnTop(true);
 	}
-	private void moveToScreen(Screen screen) {//TODO
+	private void moveToScreen(Screen screen) {
 		rescale(screen);
 		Rectangle2D primaryScreenBounds = screen.getVisualBounds();
-		stage.setX(primaryScreenBounds.getMinX()-BOX_SIZE);
-		stage.setY(primaryScreenBounds.getMinY()-BOX_SIZE);
+		stage.setX(primaryScreenBounds.getMinX()-boxSize);
+		stage.setY(primaryScreenBounds.getMinY()-boxSize);
 //		if (primaryScreenBounds.getHeight()<primaryScreenBounds.getWidth()) {
 //			BOX_SIZE=(int) (primaryScreenBounds.getWidth()/100);
 //		}
@@ -134,8 +141,10 @@ public class Game extends Application{
 			screenButton[i]=getButton("goto Screen "+(i+1), e->{
 				if (numScreens!=Screen.getScreens().size()) {
 					controller.setScene(getControllerScene());
+					return;
 				}
-				moveToScreen(Screen.getScreens().get(num));
+				screen=Screen.getScreens().get(num);
+				moveToScreen(screen);
 			});
 		}
 		HBox[] lines=new HBox[] {
@@ -156,7 +165,7 @@ public class Game extends Application{
 						getButton("Save State", e->XMLController.saveState(sim, new File("./state.xml"))),
 						getButton("Load State", e->{
 							XMLController.loadState(new File("./state.xml"),sim);
-							
+							reloadRects();
 						})
 						)
 		};

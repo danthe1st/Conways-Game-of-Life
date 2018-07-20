@@ -33,5 +33,6 @@ public class XMLSimulation {//TODO
 			cells[i]=lines[i].getCells();
 		}
 		sim.setCells(cells);
+		
 	}
 }

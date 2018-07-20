@@ -12,7 +12,7 @@ public class Simulation implements Runnable{
 		cells=new Cell[numBoxesX][numBoxesY];
 		for (int x = 0; x < cells.length; x++) {
 			for (int y = 0; y < cells[x].length; y++) {
-				cells[x][y]=new Cell(rand.nextBoolean(),new Rectangle(Game.BOX_SIZE, Game.BOX_SIZE));
+				cells[x][y]=new Cell(rand.nextBoolean(),new Rectangle(Game.boxSize, Game.boxSize));
 			}
 		}
 	}
@@ -115,11 +115,13 @@ public class Simulation implements Runnable{
 		nextFrame();
 	}
 	public void setCells(boolean[][] cells) {
+		this.cells=new Cell[cells.length][cells[0].length];
 		for (int x = 0; x < cells.length; x++) {
 			for (int y = 0; y < cells[x].length; y++) {
-				this.cells[x][y].setAlive(cells[x][y]);
+				this.cells[x][y]=new Cell(cells[x][y], new Rectangle(Game.boxSize, Game.boxSize));
 				this.cells[x][y].nextFrame();
 			}
 		}
+		
 	}
 }
