@@ -1,4 +1,4 @@
-# DanBot1
+# Conways Game of Life
 an Instance of Conway's Game Of Life (and death) made with JavaFX
 
 Conway's Game Of Life is a 2D-grid by John Horton Conway.  
