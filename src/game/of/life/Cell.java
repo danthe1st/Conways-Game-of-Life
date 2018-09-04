@@ -1,21 +1,21 @@
 package game.of.life;
 
-
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+/**
+ * reprecents a Cell<br>
+ * a Cell can be alive or dead
+ * @author Daniel Schmid
+ */
 public class Cell {
 	private boolean alive;
 	private boolean nextFrame;
 	private Rectangle pixel;
 	private static final Color COLOR_ALIVE=Color.GREEN;
 	private static final Color COLOR_DEAD=Color.BLACK;
-	public static boolean autoAdd;
-	public Cell() {
-		
-	}
-	public Cell(boolean alive,Rectangle pixel) {
+	public Cell(final boolean alive,final Rectangle pixel) {
 		this.alive=alive;
 		nextFrame=alive;
 		this.pixel=pixel;
@@ -25,14 +25,11 @@ public class Cell {
 		pixel.setOnMousePressed(e->{
 			onMousePressed(e);
 		});
-//		pixel.setOnMouseEntered(e->onMousePressed(e));
 		pixel.setOnMouseMoved(e->onMouseMoved(e));
-		
-		//pixel.setOnDragOver()
-		//pixel.setOnMouseEntered(e->onMouseEvent(e));
-		//pixel.setOnMouseDragged(e->onMouseEvent(e));
 	}
-	private void onMouseMoved(MouseEvent e) {
+	//shift...set cells alive
+	//alt...set cells dead
+	private void onMouseMoved(final MouseEvent e) {
 		if (e.isShiftDown()) {
 			this.nextFrame=true;
 		}
@@ -41,41 +38,50 @@ public class Cell {
 		}
 		nextFrame();
 	}
-	private void onMousePressed(MouseEvent e) {
-//		System.out.println("enter");
-		
+	//left-click/primary...set cell alive
+	//right-click/secondary...set cell dead
+	private void onMousePressed(final MouseEvent e) {
 		if (e.getButton()==MouseButton.NONE) {
-//			System.out.println("no-mouse");
 			return;
 		}
-		//System.out.println(e.getButton());
 		if (e.getButton()==MouseButton.PRIMARY) {
-//			System.out.println("mouse 1");
 			this.nextFrame=true;
 		}
 		else if (e.getButton()==MouseButton.SECONDARY) {
 			this.nextFrame=false;
-			
 		}
 		nextFrame();
 	}
+	/**
+	 * is a Cell alive in this Frame?
+	 * @return true if the Cell is alive
+	 */
 	public boolean isAlive() {
 		return alive;
 	}
-	public void setAlive(boolean alive) {
+	/**
+	 * sets a Cell alive or dead the next Frame
+	 * @param alive will it be alive?
+	 */
+	public void setAlive(final boolean alive) {
 		this.nextFrame = alive;
 	}
+	/**
+	 * loads the next Frame
+	 */
 	public void nextFrame(){
 		alive=nextFrame;
 		if (alive) {
-			//pixel.setStroke(COLOR_ALIVE);
 			pixel.setFill(COLOR_ALIVE);
 		}
 		else {
 			pixel.setFill(COLOR_DEAD);
-			
 		}
 	}
+	/**
+	 * 
+	 * @return the {@link Rectangle} representing the current status of the Cell
+	 */
 	public Rectangle getPixel() {
 		return pixel;
 	}

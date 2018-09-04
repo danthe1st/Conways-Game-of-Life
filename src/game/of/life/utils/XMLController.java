@@ -12,33 +12,33 @@ import game.of.life.Simulation;
 
 
 public class XMLController {
-	public static void loadState(File file,Simulation currentSimulation) {
+	public static void loadState(final File file,final Simulation currentSimulation) {
 		try {
-			JAXBContext context=JAXBContext.newInstance(XMLSimulation.class);
-			 Unmarshaller um = context.createUnmarshaller();
+			final JAXBContext context=JAXBContext.newInstance(XMLSimulation.class);
+			 final Unmarshaller um = context.createUnmarshaller();
 
 		        // Reading XML from the file and unmarshalling.
-			 XMLSimulation data = (XMLSimulation) um.unmarshal(file);
+			 final XMLSimulation data = (XMLSimulation) um.unmarshal(file);
 		        
 		     data.loadSimulation(currentSimulation);
-		} catch (JAXBException e) {
+		} catch (final JAXBException e) {
 		}
 	}
-	public static void saveState(Simulation data,File file) {
+	public static void saveState(final Simulation data,final File file) {
 		if (!file.exists()) {
 			try {
 				file.createNewFile();
-			} catch (IOException e) {
+			} catch (final IOException e) {
 			}
 		}
 		try {
-			JAXBContext context = JAXBContext
+			final JAXBContext context = JAXBContext
 			        .newInstance(XMLSimulation.class);
-			Marshaller m = context.createMarshaller();
+			final Marshaller m = context.createMarshaller();
 	        m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
 	        m.marshal(new XMLSimulation(data), file);
-		} catch (JAXBException e) {
+		} catch (final JAXBException e) {
 			
 		}
        

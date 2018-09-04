@@ -2,13 +2,17 @@ package game.of.life;
 
 import java.util.Random;
 
-
 import javafx.scene.shape.Rectangle;
+
+/**
+ * Core-Class for the Game
+ * @author Daniel Schmid
+ */
 public class Simulation implements Runnable{
 	private Cell[][] cells;
 	private static Random rand=new Random();
 	
-	public Simulation(int numBoxesX,int numBoxesY) {
+	public Simulation(final int numBoxesX,final int numBoxesY) {
 		cells=new Cell[numBoxesX][numBoxesY];
 		for (int x = 0; x < cells.length; x++) {
 			for (int y = 0; y < cells[x].length; y++) {
@@ -16,8 +20,12 @@ public class Simulation implements Runnable{
 			}
 		}
 	}
+	/**
+	 * gets the Pixels as an {@link Rectangle Rectangle[][]}
+	 * @return the Pixels
+	 */
 	public Rectangle[][] getPixels() {
-		Rectangle[][] pixels=new Rectangle[cells.length][cells[0].length];
+		final Rectangle[][] pixels=new Rectangle[cells.length][cells[0].length];
 		for (int x = 0; x < cells.length; x++) {
 			for (int y = 0; y < cells[x].length; y++) {
 				pixels[x][y]=cells[x][y].getPixel();
@@ -25,10 +33,20 @@ public class Simulation implements Runnable{
 		}
 		return pixels;
 	}
-	public boolean isAlive(int x,int y) {
+	/**
+	 * test if a Cell is alive
+	 * @param x the x-Coordinate of the Cell
+	 * @param y the y-Coordinate of the Cell
+	 * @return a boolean if the Cell is alive or not
+	 */
+	public boolean isAlive(final int x,final int y) {
 		return cells[x][y].isAlive();
 	}
-	//final Object LOCK = new Object();
+	/**
+	 * loads the next generation<br>
+	 * waits 100ms
+	 * restarts 
+	 */
 	@Override
 	public void run() {
 		
@@ -37,20 +55,23 @@ public class Simulation implements Runnable{
 				generation();
 				try {
 					Thread.sleep(100);
-				} catch (InterruptedException e) {
+				} catch (final InterruptedException e) {
 					synchronized (this) {
 						try {
 							this.wait();
-						} catch (InterruptedException e1) {
+							
+						} catch (final InterruptedException e1) {
 						}
 					}
 				}
-			} catch (Exception e) {
+			} catch (final Exception e) {
 			}
-			
 		}
 	}
-	public void generation() {
+	/**
+	 * forwards a Generation
+	 */
+	public synchronized void generation() {
 		for (int x = 0; x < cells.length; x++) {
 			for (int y = 0; y < cells[x].length; y++) {
 				int aliveCount=0;
@@ -86,6 +107,9 @@ public class Simulation implements Runnable{
 		}
 		nextFrame();
 	}
+	/**
+	 * loads the mext Frame for all Cells
+	 */
 	private void nextFrame() {
 		for (int x = 0; x < cells.length; x++) {
 			for (int y = 0; y < cells[x].length; y++) {
@@ -93,11 +117,9 @@ public class Simulation implements Runnable{
 			}
 		}
 	}
-	public void wakeUp() {
-		synchronized (this) {
-			this.notify();
-		}
-	}
+	/**
+	 * kills all Cells
+	 */
 	public void clear() {
 		for (int x = 0; x < cells.length; x++) {
 			for (int y = 0; y < cells[x].length; y++) {
@@ -106,6 +128,9 @@ public class Simulation implements Runnable{
 		}
 		nextFrame();
 	}
+	/**
+	 * randomize all Cells(if they are alive or not)
+	 */
 	public void randomize() {
 		for (int x = 0; x < cells.length; x++) {
 			for (int y = 0; y < cells[x].length; y++) {
@@ -114,7 +139,13 @@ public class Simulation implements Runnable{
 		}
 		nextFrame();
 	}
-	public void setCells(boolean[][] cells) {
+	/**
+	 * sets all Cells to a specified status
+	 * @param cells An boolean[][] with the statuses of the Cells<br>
+	 * (<code>true</code>...alive<br>
+	 * <code>false</code>...dead)
+	 */
+	public void setCells(final boolean[][] cells) {
 		this.cells=new Cell[cells.length][cells[0].length];
 		for (int x = 0; x < cells.length; x++) {
 			for (int y = 0; y < cells[x].length; y++) {
@@ -122,6 +153,24 @@ public class Simulation implements Runnable{
 				this.cells[x][y].nextFrame();
 			}
 		}
-		
+	}
+	/**
+	 * how many Cells are alive and dead
+	 */
+	@Override
+	public String toString() {
+		int alive=0;
+		int dead=0;
+		for (int x = 0; x < cells.length; x++) {
+			for (int y = 0; y < cells[x].length; y++) {
+				if (cells[x][y].isAlive()) {
+					alive++;
+				}
+				else {
+					dead++;
+				}
+			}
+		}
+		return "alive Cells: "+alive+", dead Cells: "+dead;
 	}
 }
